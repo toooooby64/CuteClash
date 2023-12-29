@@ -1,8 +1,7 @@
-I need to add the lock functionality to the other buttons 
-in the stepper (username and submit form). This has to do
+<!-- This has to do
 with the fact that lockedState variable is not being set 
 back to true after the first step is completed. 
-
+ -->
 <script lang="ts">
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
@@ -73,24 +72,23 @@ back to true after the first step is completed.
 		}
 	}, 500);
 
-    const handleSubmit = async (event) => {
+	const handleSubmit = async (event) => {
+		const form = event.target;
+		const password = form.elements.password.value;
 
-        const form = event.target;
-        const password = form.elements.password.value;
-
-        const formData = new FormData();
+		const formData = new FormData();
 		formData.append('email', email);
-        formData.append('username', username);
-        formData.append('password', password);
+		formData.append('username', username);
+		formData.append('password', password);
 
-        const response = await fetch('?/createUser', {
-            method: 'POST',
-            body: formData
-        });
+		const response = await fetch('?/createUser', {
+			method: 'POST',
+			body: formData
+		});
 
-        const body = await response.json();
-        console.log(body);
-    };
+		const body = await response.json();
+		console.log(body);
+	};
 </script>
 
 <div class="p-4">
