@@ -13,7 +13,7 @@
 <Toast position="tr" background="variant-filled-error"/>
 <AppShell>
 	<svelte:fragment slot="header">
-		<AppBar>
+		<AppBar shadow="shadow-lg ">
 			<svelte:fragment slot="lead">
 				<h1 class="h1">
 					<strong> CuteClash </strong>
