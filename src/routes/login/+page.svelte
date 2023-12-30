@@ -1,7 +1,4 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-
-	export let data: PageData;
 </script>
 
 <div class="w-full flex justify-center">
@@ -13,28 +10,30 @@
 				battles
 			</h2>
 		</div>
-		<div class="w-full">
+		<form class="w-full" action="?/login" method="post">
 			<div class="card p-4">
 				<div class="p4 m-4">
 					<label class="label">
 						<span>Email</span>
-						<input class="input" title="Email" type="text" placeholder="Email" />
+						<input class="input" title="Email" type="text" placeholder="Email" name="email"/>
 					</label>
 				</div>
 
 				<div class="p4 m-4">
 					<label class="label">
 						<span>Password</span>
-						<input class="input" title="Password" type="password" placeholder="Password" />
+						<input class="input" title="Password" type="password" placeholder="Password" name="password"/>
 					</label>
 				</div>
 				<div class="p-2 m-2 border-b-2">
 					<button class=" w-full btn variant-filled-primary">Login</button>
 				</div>
 				<div class="flex justify-center">
-					<a href="/signup" class="btn variant-filled-secondary">Create a new account</a>
+					<a href="/signup" class="btn variant-filled-secondary"
+						><button type="submit">Create a new account</button></a
+					>
 				</div>
 			</div>
-		</div>
+		</form>
 	</div>
 </div>
