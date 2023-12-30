@@ -9,7 +9,7 @@ back to true after the first step is completed.
 
 	const toastStore = getToastStore();
 	let lockedState: boolean = true;
-	let email = 'idk@gmail.com';
+	let email = '';
 	let username = '';
 
 	function debounce(func, wait) {
