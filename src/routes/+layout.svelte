@@ -19,9 +19,6 @@
 					<strong> CuteClash </strong>
 				</h1>
 			</svelte:fragment>
-			<svelte:fragment slot="trail">
-				<Avatar class="w-10" initials="AB" />
-			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
 	<!-- (sidebarRight) -->
