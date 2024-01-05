@@ -1,16 +1,17 @@
 <script lang="ts">
 </script>
 
-<div class="w-full flex justify-center">
-	<div class="flex flex-row align-top justify-center mt-32 w-1/2">
-		<div>
+<div class="w-auto flex">
+	<div class="flex align-top justify-evenly mt-32 mx-32">
+		<div class="flex-col items-start w-1/2 mr-8">
 			<h1 class="text-4xl font-bold">CuteClash</h1>
+			<br>
 			<h2 class="h2">
 				Welcome to CuteClash! Where pets from around the world engage in adorable head-to-head
 				battles
 			</h2>
 		</div>
-		<form class="w-full" action="?/login" method="post">
+		<form class="w-1/2 flex justify-start" action="?/login" method="post">
 			<div class="card p-4">
 				<div class="p4 m-4">
 					<label class="label">
