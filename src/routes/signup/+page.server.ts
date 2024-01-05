@@ -4,7 +4,7 @@
 
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { createClient } from '@supabase/supabase-js';
+import { AuthWeakPasswordError, createClient } from '@supabase/supabase-js';
 import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { SERVICE_SUPABASE_KEY } from '$env/static/private';
 
@@ -64,7 +64,9 @@ export const actions: Actions = {
 			password
 		});
 		if (error) {
-			console.error(error);
+			if (error instanceof AuthWeakPasswordError) {
+				return fail(403, { error: 'Password is too weak' });
+			}
 			return fail(409, { body: JSON.stringify({ message: 'Error creating user' }) });
 		}
 		const supabaseServiceRole = createClient(PUBLIC_SUPABASE_URL, SERVICE_SUPABASE_KEY);

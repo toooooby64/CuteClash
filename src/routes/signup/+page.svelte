@@ -1,16 +1,16 @@
 <!-- This has to do
-with the fact that lockedState variable is not being set 
-back to true after the first step is completed. 
- -->
+	with the fact that lockedState variable is not being set 
+	back to true after the first step is completed. 
+-->
 <script lang="ts">
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 
 	const toastStore = getToastStore();
-	let lockedState: boolean = true;
-	let email = '';
-	let username = '';
+	$: lockedState = true;
+	let email: string = '';
+	let username: string = '';
 
 	function debounce(func, wait) {
 		let timeout;
@@ -25,6 +25,7 @@ back to true after the first step is completed.
 	}
 
 	const unlockEmailStep = debounce(async () => {
+		lockedState = true;
 		// Regular expression for email validation
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -41,7 +42,6 @@ back to true after the first step is completed.
 		});
 
 		const data = await res.json();
-		console.log(data);
 		if (data.status === 204) {
 			lockedState = false;
 		} else {
@@ -61,7 +61,6 @@ back to true after the first step is completed.
 		});
 
 		const data = await res.json();
-		console.log(data);
 		if (data.status === 204) {
 			lockedState = false;
 		} else {
@@ -81,20 +80,34 @@ back to true after the first step is completed.
 		formData.append('username', username);
 		formData.append('password', password);
 
-		const response = await fetch('?/createUser', {
+		const res = await fetch('?/createUser', {
 			method: 'POST',
 			body: formData
 		});
 
-		const body = await response.json();
-		console.log(body);
+		const data = await res.json();
+		if (data.status === 403) {	
+			const t: ToastSettings = {
+				message : 'Password must be at least 6 characters long.'
+			};
+			toastStore.trigger(t);
+		}
 	};
+
+	const nextStep = debounce(async () => {
+		if (email === '' || username === '') {
+			lockedState = true;
+		}
+	}, 10);
+	const prevStep = debounce(async () => {
+		lockedState = false;
+	}, 10);
 </script>
 
 <div class="flex justify-center p-4 m-4 w-full">
 	<div class="w-3/5">
-		<Stepper buttonCompleteType="submit">
-			<Step locked={lockedState}>
+		<Stepper buttonCompleteType="submit" on:next={nextStep} on:back={prevStep}>
+			<Step locked={lockedState} buttonNextType="submit">
 				<svelte:fragment slot="header">Step 1: Enter a valid Email</svelte:fragment>
 				<div class="flex justify-center">
 					<label class="label">
@@ -111,7 +124,7 @@ back to true after the first step is completed.
 				</div>
 			</Step>
 
-			<Step locked={lockedState}>
+			<Step locked={lockedState} buttonNextType="submit">
 				<svelte:fragment slot="header">Step 2: Enter a user name</svelte:fragment>
 				<div class="flex justify-center">
 					<label class="label">
@@ -129,7 +142,7 @@ back to true after the first step is completed.
 			</Step>
 
 			<form action="?/createUser" method="post" on:submit|preventDefault={handleSubmit}>
-				<Step>
+				<Step buttonBackType="submit">
 					<svelte:fragment slot="header">Step 3: Enter your password</svelte:fragment>
 					<div class="flex justify-center">
 						<label class="label">
