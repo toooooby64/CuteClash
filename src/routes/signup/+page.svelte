@@ -86,11 +86,21 @@
 		});
 
 		const data = await res.json();
-		if (data.status === 403) {	
+		console.log(data);
+		if (data.status === 403) {
 			const t: ToastSettings = {
-				message : 'Password must be at least 6 characters long.'
+				message: 'Password must be at least 6 characters long.'
 			};
 			toastStore.trigger(t);
+		}
+		if (data.status === 204) {
+			const t: ToastSettings = {
+				message: 'Account created successfully! You will now be redirected to sign in page.'
+			};
+			toastStore.trigger(t);
+			setTimeout(() => {
+				window.location.href = '/login';
+			}, 1000);
 		}
 	};
 
