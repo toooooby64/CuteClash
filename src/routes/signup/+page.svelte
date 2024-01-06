@@ -6,7 +6,7 @@
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import type { ToastSettings } from '@skeletonlabs/skeleton';
 	import { getToastStore } from '@skeletonlabs/skeleton';
-
+	import Layout from '../ui/+layout.svelte';
 	const toastStore = getToastStore();
 	$: lockedState = true;
 	let email: string = '';
@@ -114,54 +114,56 @@
 	}, 10);
 </script>
 
-<div class="flex justify-center p-4 m-4 w-full">
-	<div class="w-3/5">
-		<Stepper buttonCompleteType="submit" on:next={nextStep} on:back={prevStep}>
-			<Step locked={lockedState} buttonNextType="submit">
-				<svelte:fragment slot="header">Step 1: Enter a valid Email</svelte:fragment>
-				<div class="flex justify-center">
-					<label class="label">
-						<span>Email</span>
-						<input
-							on:input={unlockEmailStep}
-							bind:value={email}
-							class="input"
-							type="Email"
-							placeholder="Type here"
-							name="email"
-						/>
-					</label>
-				</div>
-			</Step>
-
-			<Step locked={lockedState} buttonNextType="submit">
-				<svelte:fragment slot="header">Step 2: Enter a user name</svelte:fragment>
-				<div class="flex justify-center">
-					<label class="label">
-						<span>User name</span>
-						<input
-							on:input={unlockUserNameStep}
-							bind:value={username}
-							class="input"
-							type="text"
-							placeholder="Type here"
-							name="username"
-						/>
-					</label>
-				</div>
-			</Step>
-
-			<form action="?/createUser" method="post" on:submit|preventDefault={handleSubmit}>
-				<Step buttonBackType="submit">
-					<svelte:fragment slot="header">Step 3: Enter your password</svelte:fragment>
+<Layout>
+	<div class="flex justify-center p-4 m-4 w-full">
+		<div class="w-3/5">
+			<Stepper buttonCompleteType="submit" on:next={nextStep} on:back={prevStep}>
+				<Step locked={lockedState} buttonNextType="submit">
+					<svelte:fragment slot="header">Step 1: Enter a valid Email</svelte:fragment>
 					<div class="flex justify-center">
 						<label class="label">
-							<span>Password</span>
-							<input class="input" type="password" placeholder="Type here" name="password" />
+							<span>Email</span>
+							<input
+								on:input={unlockEmailStep}
+								bind:value={email}
+								class="input"
+								type="Email"
+								placeholder="Type here"
+								name="email"
+							/>
 						</label>
 					</div>
 				</Step>
-			</form>
-		</Stepper>
+
+				<Step locked={lockedState} buttonNextType="submit">
+					<svelte:fragment slot="header">Step 2: Enter a user name</svelte:fragment>
+					<div class="flex justify-center">
+						<label class="label">
+							<span>User name</span>
+							<input
+								on:input={unlockUserNameStep}
+								bind:value={username}
+								class="input"
+								type="text"
+								placeholder="Type here"
+								name="username"
+							/>
+						</label>
+					</div>
+				</Step>
+
+				<form action="?/createUser" method="post" on:submit|preventDefault={handleSubmit}>
+					<Step buttonBackType="submit">
+						<svelte:fragment slot="header">Step 3: Enter your password</svelte:fragment>
+						<div class="flex justify-center">
+							<label class="label">
+								<span>Password</span>
+								<input class="input" type="password" placeholder="Type here" name="password" />
+							</label>
+						</div>
+					</Step>
+				</form>
+			</Stepper>
+		</div>
 	</div>
-</div>
+</Layout>
