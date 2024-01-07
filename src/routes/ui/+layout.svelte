@@ -10,7 +10,7 @@
 </script>
 
 {#if loaded}
-    <div class="flex w-full h-full" transition:fade={{ delay: 250, duration: 300 }}>
+    <div class="w-full h-full" transition:fade={{ delay: 250, duration: 300 }}>
         <slot></slot>
     </div>
 {/if}

@@ -4,7 +4,7 @@
 </script>
 
 <Layout>
-	<div class="flex w-auto items-center">
+	<div class="flex w-auto h-full items-center justify-center">
 		<div class="flex w-1/3">
 			<Carousels />
 		</div>
