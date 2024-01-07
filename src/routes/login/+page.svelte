@@ -1,9 +1,14 @@
 <script>
+	import { getStores, navigating, page, updated } from '$app/stores';
+
 	import Layout from '../ui/+layout.svelte';
+	/** @type {import('./$types').PageData} */
+	export let data;
+
 </script>
 
 <Layout>
-	<div class="w-auto ">
+	<div class="w-auto">
 		<div class="flex align-top justify-evenly mt-32 mx-32">
 			<div class="flex-col items-start w-1/2 mr-8">
 				<h1 class="text-4xl font-bold">CuteClash</h1>

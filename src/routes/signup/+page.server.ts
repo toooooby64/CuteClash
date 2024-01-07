@@ -1,78 +1,94 @@
-/*
- I feel like the
-*/
 
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { AuthWeakPasswordError, createClient } from '@supabase/supabase-js';
 import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { SERVICE_SUPABASE_KEY } from '$env/static/private';
+import type { UUID } from 'crypto';
 
-export const actions: Actions = {
-	checkEmail: async ({ request, locals }) => {
-		const body = Object.fromEntries(await request.formData());
-		const { email: new_email } = body;
+const existsEmail = async (formData: FormData, locals) => {
+	const new_email = formData.get('email');
+	let { data, error } = await locals.supabase.rpc('exists_email', {
+		new_email
+	});
+	if (error) {
+		return fail(500, { error: true });
+	}
+	if (data) {
+		return fail(409, { username: formData.get('username'), emailExists: true });
+	}
+};
 
-		let { data, error } = await locals.supabase.rpc('exists_email', {
-			new_email
+const existsUsername = async (formData: FormData, locals) => {
+	const new_username = formData.get('username');
+	let { data, error } = await locals.supabase
+		.from('users')
+		.select('*')
+		.eq('username', new_username);
+
+	if (error) {
+		return fail(500, { error: true });
+	}
+	if (data.length > 0) {
+		return fail(409, { email: formData.get('email'), userNameExists: true });
+	}
+};
+
+const validPassword = async (formData: FormData, locals) => {
+	const password = formData.get('password')?.toString();
+
+	if (password.length < 6) {
+		return fail(400, {
+			email: formData.get('email'),
+			username: formData.get('username'),
+			passwordTooShort: true
 		});
-		if (error) {
-			console.error(error);
-			return fail(409, { body: JSON.stringify({ message: 'Email already exists' }) });
-		} else if (data === true) {
-			return fail(409, { body: JSON.stringify({ message: 'Email already exists' }) });
-		} else {
-			return;
+	}
+};
+
+const addUserToDatabase = async (username:FormDataEntryValue, userId: UUID) => {
+	const supabaseServiceRole = createClient(PUBLIC_SUPABASE_URL, SERVICE_SUPABASE_KEY);
+	let { data, error } = await supabaseServiceRole
+		.from('users')
+		.insert([{ username, user_id_forgien: userId }]);
+	if (error) {
+		return fail(500, { error: true });
+	}
+};
+/** @type {import('./$types').Actions} */
+export const actions: Actions = {
+	register: async ({ request, locals }) => {
+		const formData = await request.formData();
+		const username = formData.get('username');
+		const email = formData.get('email');
+		const password = formData.get('password');
+
+		if (!email || !password || !username) {
+			return fail(400, { missing: true });
 		}
-	},
-	checkUsername: async ({ request, locals }) => {
-		const body = Object.fromEntries(await request.formData());
-		const { username: new_username } = body;
-
-		let { data, error } = await locals.supabase
-			.from('users')
-			.select('*')
-			.eq('username', new_username);
-		console.log(data);
-		if (error) {
-			console.error(error);
-			return fail(409, { body: JSON.stringify({ message: 'Username already exists' }) });
-		} else if (data.length > 0) {
-			return fail(409, { body: JSON.stringify({ message: 'Username already exists' }) });
-		} else {
-			return;
+		const emailExists = await existsEmail(formData, locals);
+		if (emailExists && emailExists.status === 409) {
+			return emailExists;
 		}
-	},
-	/*
-	* Here we use the supabase client initialized in the hook to call the signUp method. 
-	* We have to create a new supabase client here because the one in the hook is 
-	* initialized with the public anon key.
-	* We need to use the service_role key to create a user in the public.users table.
-
-	* There are some thing that need to be addressed here.
-	* This has to been written in a way to make sure that if the user has a error creating a account
-	* they will not be added to the auth table. 
-
-	Right now if the user has a error creating a account they will still be added to the auth table.
-	*/
-	createUser: async ({ request, locals }) => {
-		const body = Object.fromEntries(await request.formData());
-		const { username, email, password } = body;
+		const usernameExists = await existsUsername(formData, locals);
+		if (usernameExists && usernameExists.status === 409) {
+			return usernameExists;
+		}
+		const passwordValid = await validPassword(formData, locals);
+		if (passwordValid && passwordValid.status === 400) {
+			return passwordValid;
+		}
 
 		let { data, error } = await locals.supabase.auth.signUp({
 			email,
 			password
 		});
 		if (error) {
-			if (error instanceof AuthWeakPasswordError) {
-				return fail(403, { error: 'Password is too weak' });
-			}
-			return fail(409, { body: JSON.stringify({ message: 'Error creating user' }) });
+			return fail(500, { error: true });
 		}
-		const supabaseServiceRole = createClient(PUBLIC_SUPABASE_URL, SERVICE_SUPABASE_KEY);
 		if (data) {
-			await supabaseServiceRole.from('users').insert([{ username, user_id_forgien: data.user.id }]);
+			addUserToDatabase(username, data.user.id);
+			redirect(303,'../login');
 		}
 	}
 };
-

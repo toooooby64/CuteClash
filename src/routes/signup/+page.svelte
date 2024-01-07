@@ -4,22 +4,65 @@
 -->
 <script lang="ts">
 	import Layout from '../ui/+layout.svelte';
+	/** @type {import('./$types').ActionData} */
+	export let form;
+	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
+	const toastStore = getToastStore();
+
+	const createToast = (message: string) => {
+		const t: ToastSettings = {
+			message
+		};
+		toastStore.trigger(t);
+	};
+	console.log(form);
+	if (form?.missing) {
+		createToast('All fields are required');
+	}
+
+	if (form?.emailExists) {
+		createToast('Email already in use. Please login or use another email.');
+	}
+	if (form?.userNameExists) {
+		createToast('Oh no! That username is already taken. Please try another.');
+	}
+	if (form?.passwordTooShort) {
+		createToast('Passwords must be at least 6 characters long.');
+	}
+	if (form?.error) {
+		createToast('Internal server error. Please try again later.');
+	}
 </script>
 
 <Layout>
-	<form class="flex mt-32 justify-center" action="" method="post">
+	<form class="flex mt-32 justify-center" action="?/register" method="post">
 		<div class="card p-4">
 			<div class="p4 m-4">
 				<label class="label">
 					<span>Email</span>
-					<input class="input" title="Email" type="text" placeholder="johndoe@email.com" name="email" />
+					<input
+						class="input"
+						title="Email"
+						placeholder="johndoe@email.com"
+						name="email"
+						type="email"
+						value={form?.email ?? ''}
+					/>
 				</label>
 			</div>
 
 			<div class="p4 m-4">
 				<label class="label">
 					<span>Username</span>
-					<input class="input" title="text" type="text" placeholder="Toooooby" name="username" />
+					<input
+						class="input"
+						title="text"
+						type="text"
+						placeholder="Toooooby"
+						name="username"
+						value={form?.username ?? ''}
+					/>
 				</label>
 			</div>
 
