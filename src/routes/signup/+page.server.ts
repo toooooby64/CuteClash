@@ -88,7 +88,7 @@ export const actions: Actions = {
 		}
 		if (data) {
 			addUserToDatabase(username, data.user.id);
-			redirect(303,'../login');
+			redirect(303,'../onboarding');
 		}
 	}
 };
