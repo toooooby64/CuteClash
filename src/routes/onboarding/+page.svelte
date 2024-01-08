@@ -1,7 +1,16 @@
 <script lang="ts">
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import Layout from '../ui/+layout.svelte';
+	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
+	const toastStore = getToastStore();
 
+	const createToast = (message: string) => {
+		const t: ToastSettings = {
+			message
+		};
+		toastStore.trigger(t);
+	};
 	$: fileInputs = [0]; // Initialize with one file input
 	$: numOfFileInputs = fileInputs.length;
 	function addPhoto() {
@@ -26,6 +35,7 @@
 							<button type="button" on:click={addPhoto} class="btn variant-filled-warning" disabled
 								>Add photo</button
 							>
+							{createToast('Only 5 photos are allowed')}
 						{/if}
 
 						{#each fileInputs as _, index}
