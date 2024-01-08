@@ -4,13 +4,14 @@
 	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
 	const toastStore = getToastStore();
-
 	const createToast = (message: string) => {
 		const t: ToastSettings = {
 			message
 		};
 		toastStore.trigger(t);
+		return ''
 	};
+
 	$: fileInputs = [0]; // Initialize with one file input
 	$: numOfFileInputs = fileInputs.length;
 	function addPhoto() {
@@ -18,6 +19,12 @@
 		fileInputs = fileInputs; // Trigger reactivity
 		numOfFileInputs = fileInputs.length; // Trigger reactivity
 	}
+
+	const removePhoto = (index: number) => {
+		fileInputs.splice(index, 1); // Remove the file input
+		fileInputs = fileInputs; // Trigger reactivity
+		numOfFileInputs = fileInputs.length; // Trigger reactivity
+	};
 </script>
 
 <Layout>
@@ -32,7 +39,7 @@
 								>Add photo</button
 							>
 						{:else}
-							<button type="button" on:click={addPhoto} class="btn variant-filled-warning" disabled
+							<button type="button" class="btn variant-filled-warning" disabled
 								>Add photo</button
 							>
 							{createToast('Only 5 photos are allowed')}
@@ -46,7 +53,7 @@
 									id={`file-${index}`}
 									name={`file-${index}`}
 								/>
-								<button>X</button>
+								<button on:click={removePhoto} >X</button>
 							</div>
 						{/each}
 					</div>
