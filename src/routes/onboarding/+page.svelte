@@ -1,4 +1,9 @@
 <script lang="ts">
+	/** @type {import('./$types').ActionData} */
+	export let form;
+
+	import type { PageData } from '$./types';
+	export let data: PageData;
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import Layout from '../ui/+layout.svelte';
 	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
@@ -9,7 +14,7 @@
 			message
 		};
 		toastStore.trigger(t);
-		return ''
+		return '';
 	};
 
 	$: fileInputs = [0]; // Initialize with one file input
@@ -25,39 +30,54 @@
 		fileInputs = fileInputs; // Trigger reactivity
 		numOfFileInputs = fileInputs.length; // Trigger reactivity
 	};
+
+	const uploadPhoto = async (event) => {
+		const formData = new FormData(event.target);
+		const response = await fetch(event.target.action, { method: 'POST', body: formData });
+
+		const res = await response.json();
+		const data = JSON.parse(res.data);
+		console.log(data)
+		if (data[2]) {
+			for (let i = 2; i < data.length; i++) {
+				createToast(data[i]);
+			}
+			
+		}
+	};
 </script>
 
 <Layout>
 	<div class="flex justify-center p-4 m-4 w-full">
 		<div class="w-3/5">
 			<Stepper buttonCompleteType="submit">
-				<Step buttonNextType="submit">
-					<svelte:fragment slot="header">Step 1: Upload pictures of your pet!</svelte:fragment>
-					<div class="flex flex-col justify-center">
-						{#if numOfFileInputs < 5}
-							<button type="button" on:click={addPhoto} class="btn variant-filled-primary"
-								>Add photo</button
-							>
-						{:else}
-							<button type="button" class="btn variant-filled-warning" disabled
-								>Add photo</button
-							>
-							{createToast('Only 5 photos are allowed')}
-						{/if}
+				<form action="?/uploadPhoto" method="post" on:submit|preventDefault={uploadPhoto}>
+					<Step buttonNextType="submit">
+						<svelte:fragment slot="header">Step 1: Upload pictures of your pet!</svelte:fragment>
+						<div class="flex flex-col justify-center">
+							{#if numOfFileInputs < 5}
+								<button type="button" on:click={addPhoto} class="btn variant-filled-primary"
+									>Add photo</button
+								>
+							{:else}
+								<button type="button" class="btn variant-filled-warning" disabled>Add photo</button>
+								{createToast('Only 5 photos are allowed')}
+							{/if}
 
-						{#each fileInputs as _, index}
-							<div class="flex justify-between">
-								<input
-									class=" m-1 w-1/2 input"
-									type="file"
-									id={`file-${index}`}
-									name={`file-${index}`}
-								/>
-								<button on:click={removePhoto} >X</button>
-							</div>
-						{/each}
-					</div>
-				</Step>
+							{#each fileInputs as _, index}
+								<div class="flex justify-between">
+									<input
+										class=" m-1 w-1/2 input"
+										type="file"
+										id={`file-${index}`}
+										name={`file-${index}`}
+									/>
+									<button on:click={removePhoto}>X</button>
+								</div>
+							{/each}
+						</div>
+					</Step>
+				</form>
 
 				<Step buttonNextType="submit">
 					<svelte:fragment slot="header">Step 2: Enter a user name</svelte:fragment>
