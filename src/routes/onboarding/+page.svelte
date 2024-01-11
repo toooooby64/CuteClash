@@ -10,6 +10,7 @@
 	import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
 
 	$: successfulUploads = 0;
+	$: animalType = '';
 
 	const toastStore = getToastStore();
 	const createToast = (message: string) => {
@@ -37,7 +38,7 @@
 	const uploadPhoto = async (event) => {
 		const formData = new FormData(event.target);
 		const totalPhotos = Array.from(formData.entries()).length;
-		console.log('this?')
+		console.log('this?');
 		console.log(totalPhotos);
 		if (totalPhotos === 0) {
 			return;
@@ -60,6 +61,34 @@
 	<div class="flex justify-center p-4 m-4 w-full">
 		<div class="w-3/5">
 			<Stepper buttonCompleteType="submit">
+				<Step buttonNextType="submit">
+					<svelte:fragment slot="header">Step 2: Enter pet information</svelte:fragment>
+					<div class="flex justify-center card p-4 w-full text-token space-y-4">
+						<label class="label">
+							<span>Pet's name</span>
+							<input class="input" type="text" placeholder="Hachi" name="pet-name" />
+							<label class="label">
+								<span>Type of animal</span>
+								<select class="select" bind:value={animalType}>
+									<option value="1">Dog</option>
+									<option value="2">Cat</option>
+									<option value="3">Other</option>
+								</select>
+							</label>
+							{#if animalType === 'dog'}
+								
+							{/if}
+							<label class="label">
+								<span>Textarea</span>
+								<textarea
+									class="textarea"
+									rows="4"
+									placeholder="Akita fluffball with fur the color of sunset, eyes sparkling like melted honey..."
+								/>
+							</label>
+						</label>
+					</div>
+				</Step>
 				<form action="?/uploadPhoto" method="post" on:submit|preventDefault={uploadPhoto}>
 					<Step buttonNextType="submit">
 						<svelte:fragment slot="header">Step 1: Upload pictures of your pet!</svelte:fragment>
@@ -95,16 +124,6 @@
 						{/if}
 					</Step>
 				</form>
-
-				<Step buttonNextType="submit">
-					<svelte:fragment slot="header">Step 2: Enter a user name</svelte:fragment>
-					<div class="flex justify-center">
-						<label class="label">
-							<span>User name</span>
-							<input class="input" type="text" placeholder="Type here" name="username" />
-						</label>
-					</div>
-				</Step>
 
 				<form action="?/createUser" method="post">
 					<Step buttonBackType="submit">

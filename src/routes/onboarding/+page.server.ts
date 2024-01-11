@@ -1,5 +1,11 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
+
+export const load = async ({ request, resolve }) => {
+	   const { TheCatAPI } = require('@thatapicompany/thecatapi');
+
+}
+
 export const actions: Actions = {
 	uploadPhoto: async ({ request, locals }) => {
 		const test = await locals.getSession();
