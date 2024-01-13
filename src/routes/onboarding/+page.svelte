@@ -6,7 +6,7 @@
 	import type { PageData } from '$./types';
 	export let data: PageData;
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
-	import Layout from '../ui/+layout.svelte';
+	import Animation from '../ui/Animation.svelte';
 	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
 	import { redirect } from '@sveltejs/kit';
@@ -73,7 +73,7 @@
 	};
 </script>
 
-<Layout>
+<Animation>
 	<div class="flex justify-center p-4 m-4 w-full">
 		<div class="w-3/5">
 			<Stepper buttonCompleteType="submit" on:complete={insertPet}>
@@ -151,4 +151,4 @@
 			</Stepper>
 		</div>
 	</div>
-</Layout>
+</Animation>

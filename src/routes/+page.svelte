@@ -1,6 +1,6 @@
 <script>
 	import Carousels from './ui/Carousels.svelte';
-	import Layout from './ui/+layout.svelte';
+	import Layout from './ui/Animation.svelte';
 </script>
 
 <Layout>

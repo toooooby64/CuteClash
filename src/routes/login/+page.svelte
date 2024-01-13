@@ -1,13 +1,13 @@
 <script>
 	import { getStores, navigating, page, updated } from '$app/stores';
 
-	import Layout from '../ui/+layout.svelte';
+	import Layout from '../ui/Animation.svelte';
 	/** @type {import('./$types').PageData} */
 	export let data;
 
 </script>
 
-<Layout>
+<Animation>
 	<div class="w-auto">
 		<div class="flex align-top justify-evenly mt-32 mx-32">
 			<div class="flex-col items-start w-1/2 mr-8">
@@ -51,4 +51,4 @@
 			</form>
 		</div>
 	</div>
-</Layout>
+</Animation>

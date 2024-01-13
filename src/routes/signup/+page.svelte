@@ -3,7 +3,7 @@
 	back to true after the first step is completed. 
 -->
 <script lang="ts">
-	import Layout from '../ui/+layout.svelte';
+	import Animation from '../ui/Animation.svelte';
 	/** @type {import('./$types').ActionData} */
 	export let form;
 	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
@@ -36,7 +36,7 @@
 	}
 </script>
 
-<Layout>
+<Animation>
 	<form class="flex mt-32 justify-center" action="?/register" method="post">
 		<div class="card p-4">
 			<div class="p4 m-4">
@@ -89,4 +89,4 @@
 			</div>
 		</div>
 	</form>
-</Layout>
+</Animation>
