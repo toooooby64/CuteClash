@@ -37,15 +37,20 @@ export const actions: Actions = {
 	insertPet: async ({ request, locals }) => {
 		const session = await locals.getSession();
 		const formData = await request.formData();
-		const pet_name = formData.get('petname');
-		const pettype = formData.get('pettype');	
-		const petbreed = formData.get('petbreed');
+		const pet_name = formData.get('pet-name');
+		const pettype = formData.get('type');	
+		const petbreed = formData.get('breed');
 		const description = formData.get('description');
 
+		console.log(pet_name, pettype, petbreed, description);
 		const { data, error } = await locals.supabase
 			.from('pets')
 			.insert([
 				{ owner_id: session.user.id, type: pettype, pet_name, breed: petbreed, description }
 			]);
+		if (error) {
+			console.log(error);
+			return fail(500, { error: true });
+		}
 	}
 };
