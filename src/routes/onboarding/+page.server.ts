@@ -1,14 +1,11 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
-
-export const load = async ({ request, resolve }) => {
-	   const { TheCatAPI } = require('@thatapicompany/thecatapi');
-
-}
+import { PET_API_KEY } from '$env/static/private';
 
 export const actions: Actions = {
 	uploadPhoto: async ({ request, locals }) => {
 		const test = await locals.getSession();
+		test.user.id;
 		const formData = await request.formData();
 		const errors = [];
 		const totalPhotos = Array.from(formData.entries()).length;
@@ -18,9 +15,7 @@ export const actions: Actions = {
 				.from('user-photos')
 				.upload(`${test.user.id}/${value.name}`, value);
 			if (error) {
-				console.log(value);
 				errors.push(value.name);
-				console.log(errors);
 			}
 		}
 		let totalErrors: number = errors.length;
@@ -38,5 +33,19 @@ export const actions: Actions = {
 			});
 		}
 		return { success: true, sucessfulUploads: totalPhotos - totalErrors };
+	},
+	insertPet: async ({ request, locals }) => {
+		const session = await locals.getSession();
+		const formData = await request.formData();
+		const pet_name = formData.get('petname');
+		const pettype = formData.get('pettype');	
+		const petbreed = formData.get('petbreed');
+		const description = formData.get('description');
+
+		const { data, error } = await locals.supabase
+			.from('pets')
+			.insert([
+				{ owner_id: session.user.id, type: pettype, pet_name, breed: petbreed, description }
+			]);
 	}
 };

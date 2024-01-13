@@ -31,6 +31,7 @@
 		createToast('Passwords must be at least 6 characters long.');
 	}
 	if (form?.error) {
+		
 		createToast('Internal server error. Please try again later.');
 	}
 </script>

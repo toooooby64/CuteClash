@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	/** @type {import('./$types').ActionData} */
 	export let form;
 
@@ -38,8 +39,6 @@
 	const uploadPhoto = async (event) => {
 		const formData = new FormData(event.target);
 		const totalPhotos = Array.from(formData.entries()).length;
-		console.log('this?');
-		console.log(totalPhotos);
 		if (totalPhotos === 0) {
 			return;
 		}
@@ -47,13 +46,20 @@
 
 		const res = await response.json();
 		const data = JSON.parse(res.data);
-		if (data[1]) {
+		console.log(data);
+		if (data[0].message == 1) {
 			createToast(data[1]);
 			successfulUploads += data[2];
 		} else {
 			createToast('Photos uploaded successfully');
 			successfulUploads += data[2];
 		}
+		console.log(successfulUploads);
+	};
+
+	const insertPet = async (event) => {
+		const formData = new FormData(event.target);
+		const response = await fetch(event.target.action, { method: 'POST', body: formData });
 	};
 </script>
 
@@ -61,38 +67,10 @@
 	<div class="flex justify-center p-4 m-4 w-full">
 		<div class="w-3/5">
 			<Stepper buttonCompleteType="submit">
-				<Step buttonNextType="submit">
-					<svelte:fragment slot="header">Step 2: Enter pet information</svelte:fragment>
-					<div class="flex justify-center card p-4 w-full text-token space-y-4">
-						<label class="label">
-							<span>Pet's name</span>
-							<input class="input" type="text" placeholder="Hachi" name="pet-name" />
-							<label class="label">
-								<span>Type of animal</span>
-								<select class="select" bind:value={animalType}>
-									<option value="1">Dog</option>
-									<option value="2">Cat</option>
-									<option value="3">Other</option>
-								</select>
-							</label>
-							{#if animalType === 'dog'}
-								
-							{/if}
-							<label class="label">
-								<span>Textarea</span>
-								<textarea
-									class="textarea"
-									rows="4"
-									placeholder="Akita fluffball with fur the color of sunset, eyes sparkling like melted honey..."
-								/>
-							</label>
-						</label>
-					</div>
-				</Step>
 				<form action="?/uploadPhoto" method="post" on:submit|preventDefault={uploadPhoto}>
 					<Step buttonNextType="submit">
 						<svelte:fragment slot="header">Step 1: Upload pictures of your pet!</svelte:fragment>
-						{#if successfulUploads === 5}
+						{#if successfulUploads >= 5}
 							<div class="flex justify-center">
 								<h2 class="h2">You have uploaded 5 photos.</h2>
 							</div>
@@ -122,6 +100,42 @@
 								{/each}
 							</div>
 						{/if}
+					</Step>
+				</form>
+				<form action="?/insertPet" method="post" on:submit|preventDefault={insertPet}>
+					<Step buttonNextType="submit">
+						<svelte:fragment slot="header">Step 2: Enter pet information</svelte:fragment>
+						<div class="flex justify-center card p-4 w-full text-token space-y-4">
+							<label class="label">
+								<span>Pet's name</span>
+								<input class="input" type="text" placeholder="Hachi" name="pet-name" />
+								<label class="label">
+									<span>Type of animal</span>
+									<select class="select" bind:value={animalType} name="type">
+										<option disabled selected value> -- select an option -- </option>
+										<option value="Dog">Dog</option>
+										<option value="Cat">Cat</option>
+										<option value="Other">Other</option>
+									</select>
+								</label>
+								{#if animalType === 'Dog' || animalType === 'Cat'}
+									<span>Breed</span>
+									<input class="input" type="text" placeholder="Akita/Siamese" name="breed" />
+								{:else if animalType === 'Other'}
+									<span>Animal</span>
+									<input class="input" type="text" placeholder="Hamster" name="breed" />
+								{/if}
+								<label class="label">
+									<span>Description</span>
+									<textarea
+										class="textarea"
+										rows="4"
+										placeholder="Akita fluffball with fur the color of sunset, eyes sparkling like melted honey..."
+										name="description"
+									/>
+								</label>
+							</label>
+						</div>
 					</Step>
 				</form>
 

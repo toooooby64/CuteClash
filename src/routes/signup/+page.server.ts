@@ -1,4 +1,3 @@
-
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { AuthWeakPasswordError, createClient } from '@supabase/supabase-js';
@@ -46,14 +45,19 @@ const validPassword = async (formData: FormData, locals) => {
 	}
 };
 
-const addUserToDatabase = async (username:FormDataEntryValue, userId: UUID) => {
+const addUserToDatabase = async (username: FormDataEntryValue, userId: UUID) => {
+	console.log('addUserToDatabase');
 	const supabaseServiceRole = createClient(PUBLIC_SUPABASE_URL, SERVICE_SUPABASE_KEY);
 	let { data, error } = await supabaseServiceRole
 		.from('users')
-		.insert([{ username, user_id_forgien: userId }]);
+		.insert([{ id: userId, username }]);
 	if (error) {
+		console.log(error);
+		console.log('error in UserToDatabase');
+		const { error: deleteError } = await supabaseServiceRole.auth.admin.deleteUser(userId);
 		return fail(500, { error: true });
 	}
+	console.log(data);
 };
 /** @type {import('./$types').Actions} */
 export const actions: Actions = {
@@ -87,8 +91,12 @@ export const actions: Actions = {
 			return fail(500, { error: true });
 		}
 		if (data) {
-			addUserToDatabase(username, data.user.id);
-			redirect(303,'../onboarding');
+			const added = await addUserToDatabase(username, data.user.id);
+			if (added && added.status === 500) {
+				console.log('error adding user to public database');
+				return fail(500, { error: true });
+			}
+			redirect(303, '../onboarding');
 		}
 	}
 };
