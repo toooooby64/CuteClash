@@ -6,11 +6,10 @@
 	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
 	import { initializeStores } from '@skeletonlabs/skeleton';
-
 	initializeStores();
 </script>
 
-<Toast position="tr" background="variant-filled-error"/>
+<Toast position="tr" background="variant-filled-error" />
 <AppShell>
 	<svelte:fragment slot="header">
 		<AppBar shadow="shadow-lg ">

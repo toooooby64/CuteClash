@@ -5,7 +5,6 @@ import { PET_API_KEY } from '$env/static/private';
 export const actions: Actions = {
 	uploadPhoto: async ({ request, locals }) => {
 		const test = await locals.getSession();
-		test.user.id;
 		const formData = await request.formData();
 		const errors = [];
 		const totalPhotos = Array.from(formData.entries()).length;
