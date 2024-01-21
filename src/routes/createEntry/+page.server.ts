@@ -1,5 +1,4 @@
-import { get } from 'http';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ locals }) => {
 	const urls = await getPublicUrl(locals);
@@ -14,6 +13,18 @@ export const load = (async ({ locals }) => {
 		};
 	}
 }) satisfies PageServerLoad;
+
+export const actions: Actions = {
+	createEntry: async ({ request, locals }) => {
+		const session = await locals.getSession();
+		const formData = await request.formData();
+		console.log(formData);
+		for (const entry of formData.entries()) {
+			console.log(entry[1].slice);
+		}
+	}
+
+};
 
 const getPublicUrl = async (locals) => {
 	const session = await locals.getSession();

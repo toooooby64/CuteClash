@@ -1,7 +1,7 @@
 <script>
 	import { getStores, navigating, page, updated } from '$app/stores';
 
-	import Layout from '../ui/Animation.svelte';
+	import Animation from '../ui/Animation.svelte';
 	/** @type {import('./$types').PageData} */
 	export let data;
 
