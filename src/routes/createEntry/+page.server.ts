@@ -18,12 +18,33 @@ export const actions: Actions = {
 	createEntry: async ({ request, locals }) => {
 		const session = await locals.getSession();
 		const formData = await request.formData();
-		console.log(formData);
-		for (const entry of formData.entries()) {
-			console.log(entry[1].slice);
-		}
-	}
+		const petInfo = await getPetInfo(locals);
+		const petId = petInfo.body.data[0].pet_id;
+		const ownerId = session.user.id;
 
+		let { data, error } = await locals.supabase
+			.from('entries')
+			.insert([
+				{
+					pet_id: petId,
+					owner_id: ownerId
+				}
+			])
+			.select('entry_id');
+		const entryId = data[0].entry_id;
+
+		let { data: data1, error: error1 } = await locals.supabase
+			.from('contests')
+			.insert({ entry_1: entryId })
+			.select('contest_id');
+		const contestId = data1[0].contest_id;
+		console.log(contestId);
+		let { data: data2, error: error2 } = await locals.supabase
+			.from('entries')
+			.update({ contest_id: contestId })
+			.eq('entry_id', entryId);
+		console.log(data2, error2);
+	}
 };
 
 const getPublicUrl = async (locals) => {

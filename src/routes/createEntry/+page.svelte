@@ -37,18 +37,10 @@
 				<div class="p4 m-4 w-2/5">
 					<label class="label">
 						<span>Pet's Name</span>
-						<input
-							class="input"
-							title="Pet's Name"
-							type="text"
-							value={petName}
-							name="petname"
-							disabled
-						/>
+						<input class="input" title="Pet's Name" type="text" value={petName} disabled />
 					</label>
 				</div>
 			</div>
-
 			<div class="w-auto flex justify-center">
 				<div class="p4 m-4 w-2/5">
 					<label class="label">
