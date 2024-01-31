@@ -15,34 +15,38 @@ export const load = (async ({ locals }) => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	createEntry: async ({ request, locals }) => {
-		const session = await locals.getSession();
-		const formData = await request.formData();
-		const petInfo = await getPetInfo(locals);
-		const petId = petInfo.body.data[0].pet_id;
-		const ownerId = session.user.id;
-		let { data, error } = await locals.supabase
-			.from('entries')
-			.insert([
-				{
-					pet_id: petId,
-					owner_id: ownerId
-				}
-			])
-			.select('entry_id');
-		const entryId = data[0].entry_id;
-		console.log(entryId);
-		let { data: data1, error: error1 } = await locals.supabase
+	joinContest: async ({ request, params, locals }) => {
+		console.log(params.slug);
+		const entry = await createEntry({ request, locals });
+		console.log(entry)
+		const { data, error } = await locals.supabase
 			.from('contests')
-			.insert({ entry_1: entryId, user_who_started: ownerId })
-			.select('contest_id');
-		const contestId = data1[0].contest_id;
-		console.log(contestId);
-		let { data: data2, error: error2 } = await locals.supabase
-			.from('entries')
-			.update({ contest_id: contestId })
-			.eq('entry_id', entryId);
+			.update({
+				entry_2: entry
+			})
+			.eq('contest_id', params.slug)
+			.select();
+		console.log(data,error);	
 	}
+};
+
+const createEntry = async ({ request, locals }) => {
+	const session = await locals.getSession();
+	const formData = await request.formData();
+	const petInfo = await getPetInfo(locals);
+	const petId = petInfo.body.data[0].pet_id;
+	const ownerId = session.user.id;
+	let { data, error } = await locals.supabase
+		.from('entries')
+		.insert([
+			{
+				pet_id: petId,
+				owner_id: ownerId
+			}
+		])
+		.select('entry_id');
+	const entryId = data[0].entry_id;
+	return entryId;
 };
 
 const getPublicUrl = async (locals) => {

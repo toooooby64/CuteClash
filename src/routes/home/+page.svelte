@@ -12,5 +12,7 @@
 
 
 	<a href="../createEntry"> <button type="button" class="btn variant-filled-primary">Create Entry</button></a>
+	<a href="../joinContest"> <button type="button" class="btn variant-filled-primary">Join Contest</button></a>
+
 
 </Animation>
